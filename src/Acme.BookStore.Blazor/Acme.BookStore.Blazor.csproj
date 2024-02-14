@@ -10,41 +10,41 @@
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <MvcRazorExcludeRefAssembliesFromPublish>false</MvcRazorExcludeRefAssembliesFromPublish>
     <PreserveCompilationReferences>true</PreserveCompilationReferences>
-    <UserSecretsId>Acme.BookStore-4681b4fd-151f-4221-84a4-929d86723e4c</UserSecretsId>
+    <UserSecretsId>Bookstore-4681b4fd-151f-4221-84a4-929d86723e4c</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Blazorise.Bootstrap5" Version="1.4.1" />
-    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.4.1" />
+    <PackageReference Include="Blazorise.Bootstrap5" Version="1.4.0" />
+    <PackageReference Include="Blazorise.Icons.FontAwesome" Version="1.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.Async" Version="1.5.0" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="8.0.0" />
+    <PackageReference Include="DistributedLock.Redis" Version="1.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-		<PackageReference Include="Volo.Abp.AspNetCore.Components.Server.BasicTheme" Version="8.0.3" />
-
-		<PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic" Version="8.0.3" />
-
+    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="8.0.1" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic" Version="8.0.1" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Acme.BookStore.Blazor.Client\Acme.BookStore.Blazor.Client.csproj" />
+<!--    <ProjectReference Include="..\Acme.BookStore.HttpApi.Client\Acme.BookStore.HttpApi.Client.csproj" />-->
     <ProjectReference Include="..\Acme.BookStore.Application\Acme.BookStore.Application.csproj" />
     <ProjectReference Include="..\Acme.BookStore.HttpApi\Acme.BookStore.HttpApi.csproj" />
-    <ProjectReference Include="..\Acme.BookStore.EntityFrameworkCore\Acme.BookStore.EntityFrameworkCore.csproj" />
-    <PackageReference Include="Volo.Abp.Autofac" Version="8.0.3" />
-    <PackageReference Include="Volo.Abp.Swashbuckle" Version="8.0.3" />
-    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="8.0.3" />
-    <PackageReference Include="Volo.Abp.Account.Web.OpenIddict" Version="8.0.3" />
-    <PackageReference Include="Volo.Abp.Identity.Blazor.Server" Version="8.0.3" />
-    <PackageReference Include="Volo.Abp.TenantManagement.Blazor.Server" Version="8.0.3" />
-    <PackageReference Include="Volo.Abp.SettingManagement.Blazor.Server" Version="8.0.3" />
-  </ItemGroup>
-
-  <ItemGroup Condition="Exists('./openiddict.pfx')">
-    <None Remove="openiddict.pfx" />
-    <EmbeddedResource Include="openiddict.pfx">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <ProjectReference Include="..\Acme.BookStore.EntityFrameworkCore\Acme.BookStore.EntityFrameworkCore.csproj" />    
+    <PackageReference Include="Volo.Abp.Caching.StackExchangeRedis" Version="8.0.1" />
+    <PackageReference Include="Volo.Abp.DistributedLocking" Version="8.0.1" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Mvc.Client" Version="8.0.1" />
+    <PackageReference Include="Volo.Abp.Http.Client.IdentityModel.Web" Version="8.0.1" />
+    <PackageReference Include="Volo.Abp.Autofac" Version="8.0.1" />
+    <PackageReference Include="Volo.Abp.Swashbuckle" Version="8.0.1" />
+    <PackageReference Include="Volo.Abp.AspNetCore.Serilog" Version="8.0.1" />
+    <ProjectReference Include="..\Volo.Abp.AspNetCore.Components.BlazorWeb.BasicTheme\Volo.Abp.AspNetCore.Components.BlazorWeb.BasicTheme.csproj" />
+    <ProjectReference Include="..\Volo.Abp.Identity.Blazor.Web\Volo.Abp.Identity.Blazor.Web.csproj" />
+    <ProjectReference Include="..\Volo.Abp.SettingManagement.Blazor.Web\Volo.Abp.SettingManagement.Blazor.Web.csproj" />
+    <ProjectReference Include="..\Volo.Abp.TenantManagement.Blazor.Web\Volo.Abp.TenantManagement.Blazor.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,6 +52,9 @@
     <Content Remove="Logs\**" />
     <EmbeddedResource Remove="Logs\**" />
     <None Remove="Logs\**" />
+    <Content Update="wwwroot\appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>

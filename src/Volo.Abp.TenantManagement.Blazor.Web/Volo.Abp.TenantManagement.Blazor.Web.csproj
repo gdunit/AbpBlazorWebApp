@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+<!--    <Import Project="..\..\..\..\configureawait.props" />-->
+    <Import Project="..\..\common.props" />
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Volo.Abp.FeatureManagement.Blazor.Web\Volo.Abp.FeatureManagement.Blazor.Web.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Volo.Abp.TenantManagement.Blazor" Version="8.0.1" />
+    </ItemGroup>
+
+</Project>

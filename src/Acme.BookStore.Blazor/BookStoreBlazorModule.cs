@@ -1,45 +1,44 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using Acme.BookStore.Blazor.Client.Components.Pages;
+using Acme.BookStore.Blazor.Menus;
+using Acme.BookStore.EntityFrameworkCore;
+using Acme.BookStore.Localization;
+using Acme.BookStore.MultiTenancy;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Acme.BookStore.Blazor.Menus;
-using Acme.BookStore.EntityFrameworkCore;
-using Acme.BookStore.Localization;
-using Acme.BookStore.MultiTenancy;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Extensions.DependencyInjection;
 using OpenIddict.Validation.AspNetCore;
 using Volo.Abp;
 using Volo.Abp.Account.Web;
-using Volo.Abp.AspNetCore.Components.Server.BasicTheme;
-using Volo.Abp.AspNetCore.Components.Server.BasicTheme.Bundling;
+using Volo.Abp.AspNetCore.Components.BlazorWeb.BasicTheme.Bundling;
+using Volo.Abp.AspNetCore.Components.Web.BasicTheme;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic;
 using Volo.Abp.AspNetCore.Mvc.UI.Theme.Basic.Bundling;
 using Volo.Abp.AspNetCore.Components.Web.Theming.Routing;
 using Volo.Abp.AspNetCore.Mvc;
 using Volo.Abp.AspNetCore.Mvc.Localization;
-using Volo.Abp.AspNetCore.Mvc.UI;
-using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap;
 using Volo.Abp.AspNetCore.Mvc.UI.Bundling;
-using Volo.Abp.AspNetCore.Mvc.UI.MultiTenancy;
-using Volo.Abp.AspNetCore.Mvc.UI.Theme.Shared;
 using Volo.Abp.AspNetCore.Serilog;
 using Volo.Abp.Autofac;
 using Volo.Abp.AutoMapper;
-using Volo.Abp.Identity.Blazor.Server;
-using Volo.Abp.Localization;
+using Volo.Abp.Identity.Blazor.Web;
 using Volo.Abp.Modularity;
-using Volo.Abp.Security.Claims;
-using Volo.Abp.SettingManagement.Blazor.Server;
-using Volo.Abp.Swashbuckle;
-using Volo.Abp.TenantManagement.Blazor.Server;
 using Volo.Abp.OpenIddict;
-using Volo.Abp.UI;
+using Volo.Abp.Security.Claims;
+using Volo.Abp.SettingManagement.Blazor.Web;
+using Volo.Abp.Swashbuckle;
+using Volo.Abp.TenantManagement.Blazor.Web;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.VirtualFileSystem;
@@ -54,11 +53,11 @@ namespace Acme.BookStore.Blazor;
     typeof(AbpSwashbuckleModule),
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpAccountWebOpenIddictModule),
-    typeof(AbpAspNetCoreComponentsServerBasicThemeModule),
+    typeof(AbpAspNetCoreComponentsWebBasicThemeModule),
     typeof(AbpAspNetCoreMvcUiBasicThemeModule),
-    typeof(AbpIdentityBlazorServerModule),
-    typeof(AbpTenantManagementBlazorServerModule),
-    typeof(AbpSettingManagementBlazorServerModule)
+    typeof(AbpIdentityBlazorWebModule),
+    typeof(AbpTenantManagementBlazorWebModule),
+    typeof(AbpSettingManagementBlazorWebModule)
    )]
 public class BookStoreBlazorModule : AbpModule
 {
@@ -251,6 +250,7 @@ public class BookStoreBlazorModule : AbpModule
         app.UseCorrelationId();
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseAntiforgery();
         app.UseAuthentication();
         app.UseAbpOpenIddictValidation();
 
@@ -270,4 +270,76 @@ public class BookStoreBlazorModule : AbpModule
 
         app.UseConfiguredEndpoints();
     }
+
+    /// <summary>
+    /// Returns a list of assemblies which contain routable components. 
+    /// </summary>
+    /// <returns></returns>
+    public static Assembly[] GetAdditionalAssemblies()
+    {
+        var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        List<Assembly> routableAssemblies = new();
+        foreach (var assembly in assemblies.Where(x => x != typeof(BookStoreBlazorModule).Assembly))
+        {
+            var hasRoutableComponents = false;
+            var routes = GetRoutesToRender(assembly);
+            if (routes.Count != 0)
+            {
+                routableAssemblies.Add(assembly);
+            }
+        }
+
+        foreach (var ra in routableAssemblies)
+        {
+            Console.WriteLine("Routable Assembly: " + ra.FullName);
+        }
+
+        // This does not get picked up automatically by the above. Why??
+        routableAssemblies.AddIfNotContains(typeof(Counter).Assembly);
+        return routableAssemblies.ToArray();
+    }
+    
+    public static List<string> GetRoutesToRender(Assembly assembly)
+    {
+        // Get all the components whose base class is ComponentBase
+        var components = assembly
+            .ExportedTypes
+            .Where(t => t.IsSubclassOf(typeof(ComponentBase)));
+
+        var routes = components
+            .Select(GetRouteFromComponent)
+            .Where(config => config is not null)
+            .ToList();
+
+        return routes;
+    }
+
+    private static string GetRouteFromComponent(Type component)
+    {
+        var attributes = component.GetCustomAttributes(inherit: true);
+
+        var routeAttribute = attributes.OfType<RouteAttribute>().FirstOrDefault();
+
+        if (routeAttribute is null)
+        {
+            // Only map routable components
+            return null;
+        }
+
+        var route = routeAttribute.Template;
+
+        if (string.IsNullOrEmpty(route))
+        {
+            throw new Exception($"RouteAttribute in component '{component}' has empty route template");
+        }
+
+        // Doesn't support tokens yet
+        if (route.Contains('{'))
+        {
+            throw new Exception($"RouteAttribute for component '{component}' contains route values. Route values are invalid for prerendering");
+        }
+
+        return route;
+    }
+    
 }

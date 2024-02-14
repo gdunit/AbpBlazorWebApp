@@ -29,12 +29,32 @@ public class Program
         {
             Log.Information("Starting web host.");
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.AddRazorComponents()
+                .AddInteractiveServerComponents()
+                .AddInteractiveWebAssemblyComponents();
+            
+            builder.Services.AddCascadingAuthenticationState();            
+            
             builder.Host.AddAppSettingsSecretsJson()
                 .UseAutofac()
                 .UseSerilog();
+            
             await builder.AddApplicationAsync<BookStoreBlazorModule>();
+            
             var app = builder.Build();
+            
             await app.InitializeApplicationAsync();
+
+            app.MapRazorComponents<App>()
+                .AddInteractiveServerRenderMode()
+                .AddInteractiveWebAssemblyRenderMode()
+                .AddAdditionalAssemblies(BookStoreBlazorModule.GetAdditionalAssemblies());
+            // .AddAdditionalAssemblies(typeof(AbpAspNetCoreComponentsBlazorWebBasicThemeModule).Assembly)
+            // .AddAdditionalAssemblies(typeof(AbpIdentityBlazorModule).Assembly)
+            // .AddAdditionalAssemblies(typeof(AbpTenantManagementBlazorWebModule).Assembly)
+            // .AddAdditionalAssemblies(typeof(AbpSettingManagementBlazorWebModule).Assembly);
+            
             await app.RunAsync();
             return 0;
         }

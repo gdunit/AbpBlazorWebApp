@@ -1,0 +1,91 @@
+﻿@inject IHostEnvironment Env
+@using System.Globalization
+@using Microsoft.Extensions.Hosting
+@using Volo.Abp.Localization
+
+@{
+    //Layout = null;
+    var rtl = CultureHelper.IsRtl ? "rtl" : string.Empty;
+}
+
+<!DOCTYPE html>
+<html lang="@CultureInfo.CurrentCulture.Name" dir="@rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BookStore.Blazor.Web</title>
+    <base href="/" />
+
+    <link rel="stylesheet" href="global-styles.css"/>
+    <link rel="stylesheet" href="blazor-global-styles.css"/>
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.css"/>
+    @* <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.css.map"/> *@
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css"/>
+    @* <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css.map"/> *@
+    <link rel="stylesheet" href="libs/datatables.net-bs5/css/dataTables.bootstrap5.css"/>
+    <link rel="stylesheet" href="libs/select2/css/select2.min.css"/>
+    <link rel="stylesheet" href="libs/sweetalert2/sweetalert2.css"/>
+    <link rel="stylesheet" href="_content/Blazorise/blazorise.css"/>
+    <link rel="stylesheet" href="_content/Blazorise.Bootstrap5/blazorise.bootstrap5.css"/>
+    <link rel="stylesheet" href="_content/Blazorise.Snackbar/blazorise.snackbar.css"/>
+    <link rel="stylesheet" href="_content/Volo.Abp.BlazoriseUI/volo.abp.blazoriseui.css "/>
+    <link rel="stylesheet" href="_content/Blazorise/blazorise.min.css"/>
+    <link rel="stylesheet" href="_content/Volo.Abp.AspNetCore.Components.Web.BasicTheme/libs/abp/css/theme.css"/>
+    <HeadOutlet />
+</head>
+<body class="abp-application-layout bg-light @rtl">
+
+<Routes />
+<script type="text/javascript" src="_framework/blazor.web.js"></script>
+
+<div id="blazor-error-ui">
+    @if (Env.IsDevelopment())
+    {
+        <text>
+            An unhandled exception has occurred. See browser dev tools for details.
+        </text>
+    }
+    else
+    {
+        <text>
+            An error has occurred. This app may no longer respond until reloaded.
+        </text>
+    }
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+<script type="text/javascript" src="libs/jquery/jquery.js"></script>
+<script type="text/javascript" src="libs/datatables.net/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="libs/datatables.net-bs5/js/dataTables.bootstrap5.js"></script>
+<script type="text/javascript" src="libs/bootstrap/js/bootstrap.bundle.js"></script>
+<script type="application/json" src="libs/bootstrap/js/bootstrap.bundle.js.map"></script>
+<script type="text/javascript" src="libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script type="application/json" src="libs/bootstrap/js/bootstrap.bundle.min.js.map"></script>
+<script type="text/javascript" src="libs/bootstrap/js/bootstrap.enable.popovers.everywhere.js"></script>
+<script type="text/javascript" src="libs/bootstrap/js/bootstrap.enable.tooltips.everywhere.js"></script>
+<script type="text/javascript" src="libs/jquery-form/jquery.form.min.js"></script>
+<script type="text/javascript" src="libs/jquery-validation/jquery.validate.js"></script>
+<script type="text/javascript" src="libs/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+<script type="text/javascript" src="libs/lodash/lodash.min.js"></script>
+<script type="text/javascript" src="libs/luxon/luxon.js"></script>
+<script type="application/json" src="libs/luxon/luxon.js.map"></script>
+<script type="text/javascript" src="libs/luxon/luxon.min.js"></script>
+<script type="application/json" src="libs/luxon/luxon.min.js.map"></script>
+<script type="text/javascript" src="libs/select2/js/select2.min.js"></script>
+<script type="text/javascript" src="libs/select2/js/select2.full.min.js"></script>
+<script type="text/javascript" src="libs/select2/js/i18n/en.js"></script>
+<script type="text/javascript" src="libs/sweetalert2/sweetalert2.all.js"></script>
+<script type="text/javascript" src="libs/sweetalert2/sweetalert2.all.min.js"></script>
+<script type="text/javascript" src="_content/Volo.Abp.AspNetCore.Components.Web/libs/abp/js/abp.js"></script>
+<script type="text/javascript" src="_content/Volo.Abp.AspNetCore.Components.Web/libs/abp/js/lang-utils.js"></script>
+@* <script type="text/javascript" src="breakpoint.js"></script> *@
+@* <script type="text/javascript" src="button.js"></script> *@
+@* <script type="text/javascript" src="closable.js"></script> *@
+@* <script type="text/javascript" src="colorPicker.js"></script> *@
+@* <script type="text/javascript" src="datePicker.js"></script> *@
+@* <script type="text/javascript" src="dragDrop.js"></script> *@
+@* <script type="text/javascript" src="dropdown.js"></script> *@
+@* <script type="text/javascript" src="floatingUi.js"></script> *@
+</body>
+</html>
